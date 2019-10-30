@@ -12,6 +12,7 @@
 
 # Software used
 - [Arduino IDE](https://www.arduino.cc/en/main/software)
+- [Fritzing](http://fritzing.org/download/)
  
  
 # Boards support 
@@ -30,8 +31,8 @@ To add a library in Arduino IDE go to -> Sketch -> Include Library -> Manage Lib
 
    
 # Schema
- TODO
- http://fritzing.org/download/
+TODO
+You can find the schematic in the /fritzing/halloween-project.fzz file (it opens with the Fritzing app)
  
  
 # DFPlayer info
