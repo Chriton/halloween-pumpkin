@@ -1,5 +1,5 @@
-# halloween-pumpkin
- A Halloween project 
+# Halloween pumpkin with multiple eyes
+ This is a Halloween project in which multiple servo controlled eyes placed into a pumpkin are moving randomly and a PIR sensor triggers different scary sounds to be played
  
  
 # Hardware used
@@ -30,14 +30,14 @@ To control the DFPlayer mp3 player board and the Servo Motor Driver we need to a
 To add a library in Arduino IDE go to -> Sketch -> Include Library -> Manage Libraries -> Search for the library you need and select Install
 
    
-# Schema
-TODO
-You can find the schematic in the /fritzing/halloween-project.fzz file (it opens with the [Fritzing](http://fritzing.org/download/) app)
+# Circuit diagram 
+TODO - 
+You can find the circuit diagram in [halloween-project.fzz](./fritzing/halloween-project.fzz) (it opens with the [Fritzing](http://fritzing.org/download/) app)
  
  
 # DFPlayer info
-- sdcard must be formated with FAT or FAT32
-- All audio files must be placed under /mp3 folder.
+- The sdcard must be formatted with FAT or FAT32
+- All audio files must be placed under /mp3 folder
 - Audio file must be named 0001.mp3, 0002.mp3.....0255.mp3 (4 letters not 2 or 3 letters)
 - Audio file names can have any characters after 4 digits, such as 0001_Bruno_Mars.mp3 
 
