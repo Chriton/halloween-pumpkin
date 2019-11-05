@@ -42,5 +42,4 @@ You can find the schematic in the /fritzing/halloween-project.fzz file (it opens
 - Audio file names can have any characters after 4 digits, such as 0001_Bruno_Mars.mp3 
 
 Note that beside the DFPlayer mp3 board you might also use other older boards like the [wtv020m01](https://www.iot-experiments.com/wtv020m01-mp3-to-compatible-wav/), but that one
-can only play specific encoded files ([ad4 format](https://www.buildcircuit.com/how-to-convert-mp3-and-wav-files-to-ad4-format-wtv020sd-tutorial/))  
-and supports only non HC cards up to 2gb.
+can only play specific encoded files ([ad4 format](https://www.buildcircuit.com/how-to-convert-mp3-and-wav-files-to-ad4-format-wtv020sd-tutorial/)) and supports only non HC cards up to 2gb.
