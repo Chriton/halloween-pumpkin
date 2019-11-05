@@ -1,5 +1,5 @@
 # Halloween pumpkin with multiple eyes
- This is a Halloween project in which multiple servo controlled eyes placed into a pumpkin are moving randomly and a PIR sensor triggers different scary sounds to be played
+ This is a Halloween project in which multiple servo controlled eyes placed into a pumpkin are moving randomly and a PIR sensor triggers different scary sounds to be played.
  
  
 # Hardware used
