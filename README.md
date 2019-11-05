@@ -32,7 +32,7 @@ To add a library in Arduino IDE go to -> Sketch -> Include Library -> Manage Lib
    
 # Schema
 TODO
-You can find the schematic in the /fritzing/halloween-project.fzz file (it opens with the Fritzing app)
+You can find the schematic in the /fritzing/halloween-project.fzz file (it opens with the [Fritzing](http://fritzing.org/download/) app)
  
  
 # DFPlayer info
