@@ -2,16 +2,12 @@
  * A Halloween project
  * Created by Doru Muntean
  * 30 oct 2019
+ * 
+ * https://github.com/DFRobot/DFRobotDFPlayerMini/blob/master/examples/FullFunction/FullFunction.ino
  * ***************************************************
  */
 
 #include "Arduino.h"
-
-// Print logs 
-#define SERIAL_LOG 115200
-
-// SoftwareSerial to communicate with mp3 DFPlayer
-#define SERIAL_COM 9600
 
 // For controlling the mp3 DFPlayer
 #include "SoftwareSerial.h"
@@ -20,6 +16,12 @@
 // For controlling the PCA9685 servo driver
 #include "Wire.h"
 #include "Adafruit_PWMServoDriver.h"
+
+// Print logs 
+#define SERIAL_LOG 115200
+
+// SoftwareSerial to communicate with mp3 DFPlayer
+#define SERIAL_COM 9600
 
 /**
  * Depending on your servo make, the pulse width min and max may vary, you  want
@@ -36,6 +38,9 @@
 # define DFPLAYER_RX 14
 # define DFPLAYER_TX 12
 
+// Wemos D7 pin (GPIO13) is connected to PIR sensor
+# define PIR_PIN 13
+
 /**
  * Wemos D1 pin (GPIO5) is connected to PCA9685 servo driver SCL pin
  * Wemos D2 pin (GPIO4) is connected to PCA9685 servo driver SDA pin
@@ -45,17 +50,24 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 SoftwareSerial mySoftwareSerial(DFPLAYER_RX, DFPLAYER_TX);
 DFRobotDFPlayerMini myDFPlayer;
+int humanPresent = 0;
+
+unsigned long interval = 4000; // the time we need to wait
+unsigned long previousMillis = 0; // millis() returns an unsigned long.
 
 void setupEyes();
 void setupMp3Player();
 void setEyeAngle(int eyeNumber, int angle);
-void randomTwitch(int servoNumber,int delayInMilisec);
-void printDetail(uint8_t type, int value);
+void moveEyes();
+void randomTwitch(int servoNumber, int delayInMilisec);
 
 
 void setup()
 {
-  // Initializes SoftwareSerial to communicate with mp3 DFPlayer
+  // Setup the PIR sensor
+  pinMode(PIR_PIN, INPUT);
+  
+  // Initializes SoftwareSerial to communicate with the mp3 DFPlayer
   mySoftwareSerial.begin(SERIAL_COM);
 
   // Printing logs
@@ -66,43 +78,38 @@ void setup()
 
   // Initializes the mp3 DFPlayer
   setupMp3Player();
-  
-  myDFPlayer.volume(3);  //Set volume value. From 0 to 30
-  myDFPlayer.play(1);  //Play the first mp3
-  myDFPlayer.play(1);  //Play the first mp3
+
+  // Set the mp3 DFPlayer volume value (0 is min and 30 is max)
+  myDFPlayer.volume(5);  
 }
 
 void loop()
 {
-  static unsigned long timer = millis();
-  
-  if (millis() - timer > 3000) {
-    timer = millis();
-    myDFPlayer.next();  //Play next mp3 every 3 second.
-  }
-  
-  if (myDFPlayer.available()) {
-    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+  humanPresent = digitalRead(PIR_PIN);  
+    
+  if (humanPresent == HIGH) {
+    Serial.println("Human is present! Starting to play the sounds...");
+
+    unsigned long currentMillis = millis();
+    // check if "interval" time has passed (4000 milliseconds)
+    if ((unsigned long)(currentMillis - previousMillis) >= interval) {
+      myDFPlayer.next();
+      previousMillis = millis();
+    }
+      
+  } else {
+    Serial.println("Human NOT present! Stopping the sounds...");
+    //myDFPlayer.stop();
   }
 
-  // Move the Eyes randomly
-  Serial.println("\nMoving the eyes randomly");
-  randomEyeMovement(0, random(200, 500));
-  randomEyeMovement(1, random(200, 500));
-  randomEyeMovement(2, random(200, 500));
-  randomEyeMovement(3, random(200, 500));
-  randomEyeMovement(4, random(200, 500));
-//  randomEyeMovement(5, random(500, 1000));
-//  randomEyeMovement(6, random(500, 1000));
-//  randomEyeMovement(7, random(500, 1000));
-//  randomEyeMovement(8, random(500, 1000));
-//  randomEyeMovement(9, random(500, 1000));
-  Serial.println("Done.\n");
+  // Move the eyes randomly
+  moveEyes();
+  //delay(2000);
 }
 
-
+  
 /**
- * This will set the eye angle to the specified value
+ * Set the eye angle to the specified value
  */
 void setEyeAngle(int eyeNumber, int angle) {
     int pulselength = map(angle, 0, 180, SERVOMIN, SERVOMAX);
@@ -111,16 +118,16 @@ void setEyeAngle(int eyeNumber, int angle) {
 }
 
 /**
- * This will set the eye to a random angle (between 45 and 135 degrees)
+ * Set the eye to a random angle (between 45 and 135 degrees)
  */
-void randomEyeMovement(int eyeNumber,int delayInMilisec) {
+void randomEyeMovement(int eyeNumber, int delayInMilisec) {
+  setEyeAngle(eyeNumber, random(45, 135));
   delay(delayInMilisec);
-  setEyeAngle(eyeNumber, random(45,135));
 }
 
 
 /**
- * This will set up the servo pwm and center all the eyes
+ * Set up the servo pwm freq and center all the eyes
  */
 void setupEyes() {
 
@@ -133,27 +140,57 @@ void setupEyes() {
 
   // Centering all the eyes - 9 eyes
   Serial.println("Centering all the Eyes...");
+  // TODO - replace with for loop
   setEyeAngle(0, 90);
+  delay(100);
   setEyeAngle(1, 90);
+  delay(100);
   setEyeAngle(2, 90);
+  delay(100);
   setEyeAngle(3, 90);
+  delay(100);
   setEyeAngle(4, 90);
+  delay(100);
   setEyeAngle(5, 90);
+  delay(100);
   setEyeAngle(6, 90);
+  delay(100);
   setEyeAngle(7, 90);
+  delay(100);
   setEyeAngle(8, 90);
+  delay(100);
   Serial.println("Done.\n");
-  delay(10);
 }
 
 /**
- * Initializes the mp3 DFPlayer
+ * Move the eyes randomly
+ */
+void moveEyes() {
+    
+    Serial.println("\nMoving the eyes randomly");
+    randomEyeMovement(0, random(100, 200));
+    randomEyeMovement(1, random(100, 200));
+    randomEyeMovement(2, random(200, 500));
+    
+    randomEyeMovement(3, random(100, 200));
+    randomEyeMovement(4, random(100, 200));
+    randomEyeMovement(5, random(200, 500));
+    
+    randomEyeMovement(6, random(100, 200));
+    randomEyeMovement(7, random(100, 200));
+    randomEyeMovement(8, random(200, 500));
+    Serial.println("Done.\n");
+}
+
+/**
+ * Initialise the mp3 DFPlayer
  */
 void setupMp3Player() {
   Serial.println();
   Serial.println(F("Initializing DFPlayer... (May take 3~5 seconds)"));
-  
-  if (!myDFPlayer.begin(mySoftwareSerial)) {  //Use softwareSerial to communicate with mp3.
+
+  // Use softwareSerial to communicate with mp3 DFPlayer
+  if (!myDFPlayer.begin(mySoftwareSerial)) { 
     Serial.println(F("Unable to initialize DFPlayer:"));
     Serial.println(F("1.Please recheck the connection!"));
     Serial.println(F("2.Please insert the SD card!\n"));
@@ -162,68 +199,4 @@ void setupMp3Player() {
     }
   }
   Serial.println(F("DFPlayer Mini online.\n"));
-}
-
-/**
- * Print mp3 DFPlayer details 
- */
-void printDetail(uint8_t type, int value) {
-  switch (type) {
-    case TimeOut:
-      Serial.println(F("Time Out!"));
-      break;
-    case WrongStack:
-      Serial.println(F("Stack Wrong!"));
-      break;
-    case DFPlayerCardInserted:
-      Serial.println(F("Card Inserted!"));
-      break;
-    case DFPlayerCardRemoved:
-      Serial.println(F("Card Removed!"));
-      break;
-    case DFPlayerCardOnline:
-      Serial.println(F("Card Online!"));
-      break;
-    case DFPlayerUSBInserted:
-      Serial.println("USB Inserted!");
-      break;
-    case DFPlayerUSBRemoved:
-      Serial.println("USB Removed!");
-      break;
-    case DFPlayerPlayFinished:
-      Serial.print(F("Number:"));
-      Serial.print(value);
-      Serial.println(F(" Play Finished!"));
-      break;
-    case DFPlayerError:
-      Serial.print(F("DFPlayerError:"));
-      switch (value) {
-        case Busy:
-          Serial.println(F("Card not found"));
-          break;
-        case Sleeping:
-          Serial.println(F("Sleeping"));
-          break;
-        case SerialWrongStack:
-          Serial.println(F("Get Wrong Stack"));
-          break;
-        case CheckSumNotMatch:
-          Serial.println(F("Check Sum Not Match"));
-          break;
-        case FileIndexOut:
-          Serial.println(F("File Index Out of Bound"));
-          break;
-        case FileMismatch:
-          Serial.println(F("Cannot Find File"));
-          break;
-        case Advertise:
-          Serial.println(F("In Advertise"));
-          break;
-        default:
-          break;
-      }
-      break;
-    default:
-      break;
-  }
 }
