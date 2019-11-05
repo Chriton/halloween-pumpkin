@@ -15,14 +15,15 @@
 - [Fritzing](http://fritzing.org/download/)
  
  
-# Boards support 
-This project uses a [Wemos D1 mini](https://wiki.wemos.cc/products:d1:d1_mini) so you need to add support for ESP8266 boards in Arduino IDE.
+# Arduino IDE config 
+
+### 1. Add [Wemos D1 mini](https://wiki.wemos.cc/products:d1:d1_mini) board support
+This project uses a [Wemos D1 mini](https://wiki.wemos.cc/products:d1:d1_mini) so you need to add support for it in [Arduino IDE](https://www.arduino.cc/en/main/software).
 To do that, go to Arduino IDE -> Preferences -> Additional boards Manager URLs and add these:
  - https://dl.espressif.com/dl/package_esp32_index.json
  - http://arduino.esp8266.com/stable/package_esp8266com_index.json
  
- 
-# Additional Libraries needed
+### 2. Add the additional libraries needed
 To control the DFPlayer mp3 player board and the Servo Motor Driver we need to add these additional libraries in Arduino IDE:
  - DFRobotDFplayerMini
  - Adafruit PWM Servo Driver 
