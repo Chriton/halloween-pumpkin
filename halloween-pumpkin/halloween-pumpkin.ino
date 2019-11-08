@@ -3,10 +3,8 @@
  * Created by Doru Muntean
  * 30 oct 2019
  * 
- * https://github.com/DFRobot/DFRobotDFPlayerMini/blob/master/examples/FullFunction/FullFunction.ino
  * ***************************************************
  */
-
 #include "Arduino.h"
 
 // For controlling the mp3 DFPlayer
@@ -91,20 +89,21 @@ void loop()
     Serial.println("Human is present! Starting to play the sounds...");
 
     unsigned long currentMillis = millis();
-    // check if "interval" time has passed (4000 milliseconds)
-    if ((unsigned long)(currentMillis - previousMillis) >= interval) {
+    
+    // check if "interval" time has passed
+    if (currentMillis - previousMillis >= interval) {
       myDFPlayer.next();
-      previousMillis = millis();
+      //myDFPlayer.play(1);
+      previousMillis = currentMillis;
     }
       
   } else {
-    Serial.println("Human NOT present! Stopping the sounds...");
+    Serial.println("Human NOT present...");
     //myDFPlayer.stop();
   }
 
   // Move the eyes randomly
   moveEyes();
-  //delay(2000);
 }
 
   
@@ -166,7 +165,6 @@ void setupEyes() {
  * Move the eyes randomly
  */
 void moveEyes() {
-    
     Serial.println("\nMoving the eyes randomly");
     randomEyeMovement(0, random(100, 200));
     randomEyeMovement(1, random(100, 200));
@@ -187,16 +185,16 @@ void moveEyes() {
  */
 void setupMp3Player() {
   Serial.println();
-  Serial.println(F("Initializing DFPlayer... (May take 3~5 seconds)"));
+  Serial.println("Initializing DFPlayer... (May take 3~5 seconds)");
 
   // Use softwareSerial to communicate with mp3 DFPlayer
   if (!myDFPlayer.begin(mySoftwareSerial)) { 
-    Serial.println(F("Unable to initialize DFPlayer:"));
-    Serial.println(F("1.Please recheck the connection!"));
-    Serial.println(F("2.Please insert the SD card!\n"));
+    Serial.println("Unable to initialize DFPlayer:");
+    Serial.println("1.Please recheck the connection!");
+    Serial.println("2.Please insert the SD card!\n");
     while(true){
       delay(0); // Code to compatible with ESP8266 watch dog.
     }
   }
-  Serial.println(F("DFPlayer Mini online.\n"));
+  Serial.println("DFPlayer Mini online.\n");
 }
